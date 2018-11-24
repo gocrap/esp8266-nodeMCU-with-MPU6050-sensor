@@ -2,8 +2,8 @@
 #include "Wire.h"
 #include <ESP8266WiFi.h>
  
-const char* ssid = "SLEEP DEPRIVED";//type your ssid
-const char* password = "Boulder01";//type your password
+const char* ssid = "";//type your ssid
+const char* password = "";//type your password
  
 WiFiServer server(80);//Service Port
 
