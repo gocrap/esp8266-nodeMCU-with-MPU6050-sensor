@@ -6,7 +6,7 @@ const char* ssid = "SLEEP DEPRIVED";//type your ssid
 const char* password = "Boulder01";//type your password
 
  //setup connection to webpage
-const char server[] = "https://espbots.000webhostapp.com"; 
+const char server[] = "https://example.000webhostapp.com"; 
 
 WiFiClient client;
 
@@ -351,7 +351,7 @@ void webprint(const char* input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.print("Host: example.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
@@ -389,7 +389,7 @@ void webprint(char input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.print("Host: example.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
@@ -427,7 +427,7 @@ void webprint(int input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.print("Host: example.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
@@ -465,7 +465,7 @@ void webprint(float input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.print("Host: example.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
