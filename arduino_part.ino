@@ -2,12 +2,17 @@
 #include "Wire.h"
 #include <ESP8266WiFi.h>
  
-const char* ssid = "";//type your ssid
-const char* password = "";//type your password
- 
-WiFiServer server(80);//Service Port
+const char* ssid = "SLEEP DEPRIVED";//type your ssid
+const char* password = "Boulder01";//type your password
 
-WiFiClient client = server.available();
+ //setup connection to webpage
+const char server[] = "https://espbots.000webhostapp.com"; 
+
+WiFiClient client;
+
+//void webprint(const char* input);
+//void cleardoc();
+
 
 const uint8_t MPU_addr=0x68; // I2C address of the MPU-6050
  
@@ -72,37 +77,9 @@ void setup() {
   Serial.println("");
   Serial.println("WiFi connected");
    
-  // Start the server
-  server.begin();
-  Serial.println("Server started");
- 
-  // Print the IP address
-  Serial.print("Use this URL to connect: ");
-  Serial.print("http://");
-  Serial.print(WiFi.localIP());
-  Serial.println("/");
 }
  
 void loop() {
-  //setup which lets us print to the webpage which must be preformed each time
-  // Check if a client has connected
-  client = server.available();
-  if (!client) {
-    return;
-  }
-   
-  // Wait until the client sends some data
-  //Serial.println("new client");
-  while(!client.available()){
-    delay(1);
-    //Serial.println("$");
-  }
-   
-  // Read the first line of the request
-  String request = client.readStringUntil('\r');
-  //Serial.println(request);
-  client.flush();
-  client.print(".");
 
   //now read from the sensor and write to the webpage using these fuctions
   rawdata next_sample;
@@ -111,6 +88,7 @@ void loop() {
   convertRawToScaled(MPU_addr, next_sample,true);
  
   delay(5000); // Wait 5 seconds and scan again
+  cleardoc();
 }
  
   
@@ -134,21 +112,23 @@ bool checkI2c(byte addr){
   // the Write.endTransmisstion to see if
   // a device did acknowledge to the address.
   Serial.println(" ");
-  client.println(" ");
+  webprint(" ");
   Wire.beginTransmission(addr);
  
   if (Wire.endTransmission() == 0){
     Serial.print(" Device Found at 0x");
     Serial.println(addr,HEX);
-    client.print(" Device Found at 0x");
-    client.println(addr,HEX);
+    webprint(" Device Found at 0x");
+    webprint(addr);
+    webprint(HEX);
     return true;
   }
   else{
     Serial.print(" No Device Found at 0x");
     Serial.println(addr,HEX);
-    client.print(" No Device Found at 0x");
-    client.println(addr,HEX);
+    webprint(" No Device Found at 0x");
+    webprint(addr);
+    webprint(HEX);
     return false;
   }
 }
@@ -177,25 +157,25 @@ rawdata mpu6050Read(byte addr, bool Debug){
   if(Debug){
     
     Serial.print(" GyX = "); Serial.print(values.GyX);
-    client.print(" GyX = "); Serial.print(values.GyX);
+    webprint(" GyX = "); webprint(values.GyX);
     
     Serial.print(" | GyY = "); Serial.print(values.GyY);
-    client.print(" | GyY = "); Serial.print(values.GyY);
+    webprint(" | GyY = "); webprint(values.GyY);
     
     Serial.print(" | GyZ = "); Serial.print(values.GyZ);
-    client.print(" | GyZ = "); Serial.print(values.GyZ);
+    webprint(" | GyZ = "); webprint(values.GyZ);
     
     Serial.print(" | Tmp = "); Serial.print(values.Tmp);
-    client.print(" | Tmp = "); Serial.print(values.Tmp);
+    webprint(" | Tmp = "); webprint(values.Tmp);
     
     Serial.print(" | AcX = "); Serial.print(values.AcX);
-    client.print(" | AcX = "); Serial.print(values.AcX);
+    webprint(" | AcX = "); webprint(values.AcX);
     
     Serial.print(" | AcY = "); Serial.print(values.AcY);
-    client.print(" | AcY = "); Serial.print(values.AcY);
+    webprint(" | AcY = "); webprint(values.AcY);
     
     Serial.print(" | AcZ = "); Serial.println(values.AcZ);
-    client.print(" | AcZ = "); Serial.println(values.AcZ);
+    webprint(" | AcZ = "); webprint(values.AcZ);
   }
  
   return values;
@@ -230,7 +210,7 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
    
   if(Debug){
     Serial.print("Gyro Full-Scale = ");
-    client.print("Gyro Full-Scale = ");
+    webprint("Gyro Full-Scale = ");
   }
  
   switch (Gyro){
@@ -238,28 +218,28 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
     scale_value = MPU_GYRO_250_SCALE;
     if(Debug){
       Serial.println("±250 °/s");
-      client.println("±250 °/s");
+      webprint("±250 °/s");
     }
     break;
     case 1:
     scale_value = MPU_GYRO_500_SCALE;
     if(Debug){
       Serial.println("±500 °/s");
-      client.println("±500 °/s");
+      webprint("±500 °/s");
     }
     break;
     case 2:
     scale_value = MPU_GYRO_1000_SCALE;
     if(Debug){
       Serial.println("±1000 °/s");
-      client.println("±1000 °/s");
+      webprint("±1000 °/s");
     }
     break;
     case 3:
     scale_value = MPU_GYRO_2000_SCALE;
     if(Debug){
       Serial.println("±2000 °/s");
-      client.println("±2000 °/s");
+      webprint("±2000 °/s");
     }
     break;
     default:
@@ -269,39 +249,43 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
   values.GyX = (float) data_in.GyX / scale_value;
   values.GyY = (float) data_in.GyY / scale_value;
   values.GyZ = (float) data_in.GyZ / scale_value;
+
+  const char* galx = (const char*) data_in.GyX;
+  const char* galy = (const char*) data_in.GyY;
+  const char* galz = (const char*) data_in.GyZ;
    
   scale_value = 0.0;
   if(Debug){
     Serial.print("Accl Full-Scale = ");
-    client.print("Accl Full-Scale = ");
+    webprint("Accl Full-Scale = ");
   }
   switch (Accl){
     case 0:
     scale_value = MPU_ACCL_2_SCALE;
     if(Debug){
       Serial.println("±2 g");
-      client.println("±2 g");
+      webprint("±2 g");
     }
     break;
     case 1:
     scale_value = MPU_ACCL_4_SCALE;
     if(Debug){
       Serial.println("±4 g");
-      client.println("±4 g");
+      webprint("±4 g");
     }
     break;
     case 2:
     scale_value = MPU_ACCL_8_SCALE;
     if(Debug){
       Serial.println("±8 g");
-      client.println("±8 g");
+      webprint("±8 g");
     }
     break;
     case 3:
     scale_value = MPU_ACCL_16_SCALE;
     if(Debug){
       Serial.println("±16 g");
-      client.println("±16 g");
+      webprint("±16 g");
     }
     break;
     default:
@@ -310,34 +294,230 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
   values.AcX = (float) data_in.AcX / scale_value;
   values.AcY = (float) data_in.AcY / scale_value;
   values.AcZ = (float) data_in.AcZ / scale_value;
-   
+
+  const char* valx = (const char*)data_in.AcX ;
+  const char* valy = (const char*)data_in.AcY ;
+  const char* valz = (const char*)data_in.AcZ ;
     
    
   values.Tmp = (float) data_in.Tmp / 340.0 + 36.53;
+
+  int tai = data_in.Tmp / 340.0 + 36.53;
+
+  const char* tal = (const char*) tai;
    
   if(Debug){
     
   Serial.print(" GyX = "); Serial.print(values.GyX);
-  client.print(" GyX = "); client.print(values.GyX);
+  webprint(" GyX = "); webprint(values.GyX);
   
   Serial.print(" °/s| GyY = "); Serial.print(values.GyY);
-  client.print(" °/s| GyY = "); client.print(values.GyY);
+  webprint(" °/s| GyY = "); webprint(values.GyY);
   
   Serial.print(" °/s| GyZ = "); Serial.print(values.GyZ);
-  client.print(" °/s| GyZ = "); client.print(values.GyZ);
+  webprint(" °/s| GyZ = "); webprint(values.GyZ);
    
   Serial.print(" °/s| Tmp = "); Serial.print(values.Tmp);
-  client.print(" °/s| Tmp = "); client.print(values.Tmp);
+  webprint(" °/s| Tmp = "); webprint(values.Tmp);
   
   Serial.print(" °C| AcX = "); Serial.print(values.AcX);
-  client.print(" °C| AcX = "); client.print(values.AcX);
+  webprint(" °C| AcX = "); webprint(valx);
   
   Serial.print(" g| AcY = "); Serial.print(values.AcY);
-  client.print(" g| AcY = "); client.print(values.AcY);
+  webprint(" g| AcY = "); webprint(values.AcX);
   
   Serial.print(" g| AcZ = "); Serial.print(values.AcZ);Serial.println(" g");
-  client.print(" g| AcZ = "); client.print(values.AcZ);client.println(" g");
+  webprint(" g| AcZ = "); webprint(values.AcZ);webprint(" g");
   }
    
   return values;
 }
+
+//webprint
+void webprint(const char* input) {
+
+  
+  delay(5);
+
+
+  //Serial.println("\nStarting connection to server..."); 
+  // if you get a connection, report back via serial:
+  if (client.connect(server, 80)) {
+    //Serial.println("connected to server");
+    //WiFi.printDiag(Serial);
+
+    String data = "var=" + (String)input;
+
+     //change URL below to the Sub-Domain
+     client.println("POST /Home/Code2.php HTTP/1.1"); 
+     //change URL below ito match the Domain
+     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.println("User-Agent: ESP8266/1.0");
+     client.println("Connection: close"); 
+     client.println("Content-Type: application/x-www-form-urlencoded");
+     client.print("Content-Length: ");
+     client.print(data.length());
+     client.print("\n\n");
+     client.print(data);
+     client.stop(); 
+     
+     //Serial.println("\n");
+    //Serial.println("this is what we sent: ");
+     //Serial.println(data);
+     //Serial.println("which was this many bytes: ");
+     //Serial.println(data.length());       
+     delay(5);
+    } 
+
+}
+
+
+void webprint(char input) {
+
+  
+  delay(5);
+
+
+  //Serial.println("\nStarting connection to server..."); 
+  // if you get a connection, report back via serial:
+  if (client.connect(server, 80)) {
+    //Serial.println("connected to server");
+    //WiFi.printDiag(Serial);
+
+    String data = "var=" + (String)input;
+
+     //change URL below to the Sub-Domain
+     client.println("POST /Home/Code2.php HTTP/1.1"); 
+     //change URL below ito match the Domain
+     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.println("User-Agent: ESP8266/1.0");
+     client.println("Connection: close"); 
+     client.println("Content-Type: application/x-www-form-urlencoded");
+     client.print("Content-Length: ");
+     client.print(data.length());
+     client.print("\n\n");
+     client.print(data);
+     client.stop(); 
+     
+     //Serial.println("\n");
+    //Serial.println("this is what we sent: ");
+     //Serial.println(data);
+     //Serial.println("which was this many bytes: ");
+     //Serial.println(data.length());       
+     delay(5);
+    } 
+
+}
+
+
+void webprint(int input) {
+
+  
+  delay(5);
+
+
+  //Serial.println("\nStarting connection to server..."); 
+  // if you get a connection, report back via serial:
+  if (client.connect(server, 80)) {
+    //Serial.println("connected to server");
+    //WiFi.printDiag(Serial);
+
+    String data = "var=" + (String)input;
+
+     //change URL below to the Sub-Domain
+     client.println("POST /Home/Code2.php HTTP/1.1"); 
+     //change URL below ito match the Domain
+     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.println("User-Agent: ESP8266/1.0");
+     client.println("Connection: close"); 
+     client.println("Content-Type: application/x-www-form-urlencoded");
+     client.print("Content-Length: ");
+     client.print(data.length());
+     client.print("\n\n");
+     client.print(data);
+     client.stop(); 
+     
+     //Serial.println("\n");
+    //Serial.println("this is what we sent: ");
+     //Serial.println(data);
+     //Serial.println("which was this many bytes: ");
+     //Serial.println(data.length());       
+     delay(5);
+    } 
+
+}
+
+
+void webprint(float input) {
+
+  
+  delay(5);
+
+
+  //Serial.println("\nStarting connection to server..."); 
+  // if you get a connection, report back via serial:
+  if (client.connect(server, 80)) {
+    //Serial.println("connected to server");
+    //WiFi.printDiag(Serial);
+
+    String data = "var=" + (String)input;
+
+     //change URL below to the Sub-Domain
+     client.println("POST /Home/Code2.php HTTP/1.1"); 
+     //change URL below ito match the Domain
+     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.println("User-Agent: ESP8266/1.0");
+     client.println("Connection: close"); 
+     client.println("Content-Type: application/x-www-form-urlencoded");
+     client.print("Content-Length: ");
+     client.print(data.length());
+     client.print("\n\n");
+     client.print(data);
+     client.stop(); 
+     
+     //Serial.println("\n");
+    //Serial.println("this is what we sent: ");
+     //Serial.println(data);
+     //Serial.println("which was this many bytes: ");
+     //Serial.println(data.length());       
+     delay(5);
+    } 
+
+}
+
+void cleardoc (){
+  
+  delay(20);
+
+
+  //Serial.println("\nStarting connection to server..."); 
+  // if you get a connection, report back via serial:
+  if (client.connect(server, 80)) {
+   // Serial.println("connected to server");
+    WiFi.printDiag(Serial);
+
+    String endthis = "endthis=" + (String)"1";
+
+     //change URL below to the Sub-Domain
+     client.println("POST /Home/Code2.php HTTP/1.1"); 
+     //change URL below ito match the Domain
+     client.print("Host: espbots.000webhostapp.com\n");                 
+     client.println("User-Agent: ESP8266/1.0");
+     client.println("Connection: close"); 
+     client.println("Content-Type: application/x-www-form-urlencoded");
+     client.print("Content-Length: ");
+     client.print(endthis.length());
+     client.print("\n\n");
+     client.print(endthis);
+     client.stop(); 
+     
+     //Serial.println("\n");
+     //Serial.println("this is what we sent: ");
+     //Serial.println(endthis);
+     //Serial.println("which was this many bytes: ");
+     //erial.println(endthis.length());       
+     delay(20);
+    } 
+  
+}
+
