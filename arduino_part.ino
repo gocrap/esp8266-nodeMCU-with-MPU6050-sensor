@@ -2,8 +2,8 @@
 #include "Wire.h"
 #include <ESP8266WiFi.h>
  
-const char* ssid = "SLEEP DEPRIVED";//type your ssid
-const char* password = "Boulder01";//type your password
+const char* ssid = "ssid";//type your ssid
+const char* password = "12345";//type your password
 
  //setup connection to webpage
 const char server[] = "https://example.000webhostapp.com"; 
