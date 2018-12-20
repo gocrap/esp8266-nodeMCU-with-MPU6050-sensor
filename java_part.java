@@ -13,7 +13,7 @@ public class first {
 
         try {
 
-            URL url = new URL("http://192.168.1.51/");
+            URL url = new URL("https://example.000webhostapp.com/home/code2.php"); // example website
             br = new BufferedReader(new InputStreamReader(url.openStream()));
 
             String line;
