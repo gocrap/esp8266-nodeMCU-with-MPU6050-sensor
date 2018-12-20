@@ -55,7 +55,7 @@ void getMPU6050scales(byte addr,uint8_t &Gyro,uint8_t &Accl);
 scaleddata convertRawToScaled(byte addr, rawdata data_in,bool Debug);
  
 void setup() {
-  Wire.begin();
+  
   Serial.begin(115200);
  
   mpu6050Begin(MPU_addr);
@@ -76,6 +76,7 @@ void setup() {
   }
   Serial.println("");
   Serial.println("WiFi connected");
+  Wire.begin();
    
 }
  
