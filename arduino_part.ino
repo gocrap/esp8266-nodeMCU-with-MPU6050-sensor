@@ -58,7 +58,7 @@ void setup() {
   
   Serial.begin(115200);
  
-  mpu6050Begin(MPU_addr);
+ 
 
   delay(10);
 
@@ -76,20 +76,24 @@ void setup() {
   }
   Serial.println("");
   Serial.println("WiFi connected");
+  
+  mpu6050Begin(MPU_addr);
+   
   Wire.begin();
    
 }
  
 void loop() {
-
+  
+  cleardoc();
   //now read from the sensor and write to the webpage using these fuctions
   rawdata next_sample;
   setMPU6050scales(MPU_addr,0b00000000,0b00010000);
   next_sample = mpu6050Read(MPU_addr, true);
   convertRawToScaled(MPU_addr, next_sample,true);
  
-  delay(5000); // Wait 5 seconds and scan again
-  cleardoc();
+  delay(1000); // Wait 1 second and scan again
+  
 }
  
   
@@ -119,17 +123,17 @@ bool checkI2c(byte addr){
   if (Wire.endTransmission() == 0){
     Serial.print(" Device Found at 0x");
     Serial.println(addr,HEX);
-    webprint(" Device Found at 0x");
-    webprint(addr);
-    webprint(HEX);
+    //webprint(" Device Found at 0x");
+    //webprint(addr);
+    //webprint(HEX);
     return true;
   }
   else{
     Serial.print(" No Device Found at 0x");
     Serial.println(addr,HEX);
-    webprint(" No Device Found at 0x");
-    webprint(addr);
-    webprint(HEX);
+    //webprint(" No Device Found at 0x");
+    //webprint(addr);
+    //webprint(HEX);
     return false;
   }
 }
@@ -250,10 +254,6 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
   values.GyX = (float) data_in.GyX / scale_value;
   values.GyY = (float) data_in.GyY / scale_value;
   values.GyZ = (float) data_in.GyZ / scale_value;
-
-  const char* galx = (const char*) data_in.GyX;
-  const char* galy = (const char*) data_in.GyY;
-  const char* galz = (const char*) data_in.GyZ;
    
   scale_value = 0.0;
   if(Debug){
@@ -295,10 +295,6 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
   values.AcX = (float) data_in.AcX / scale_value;
   values.AcY = (float) data_in.AcY / scale_value;
   values.AcZ = (float) data_in.AcZ / scale_value;
-
-  const char* valx = (const char*)data_in.AcX ;
-  const char* valy = (const char*)data_in.AcY ;
-  const char* valz = (const char*)data_in.AcZ ;
     
    
   values.Tmp = (float) data_in.Tmp / 340.0 + 36.53;
@@ -322,10 +318,10 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
   webprint(" °/s| Tmp = "); webprint(values.Tmp);
   
   Serial.print(" °C| AcX = "); Serial.print(values.AcX);
-  webprint(" °C| AcX = "); webprint(valx);
+  webprint(" °C| AcX = "); webprint(values.AcX);
   
   Serial.print(" g| AcY = "); Serial.print(values.AcY);
-  webprint(" g| AcY = "); webprint(values.AcX);
+  webprint(" g| AcY = "); webprint(values.AcY);
   
   Serial.print(" g| AcZ = "); Serial.print(values.AcZ);Serial.println(" g");
   webprint(" g| AcZ = "); webprint(values.AcZ);webprint(" g");
@@ -352,7 +348,7 @@ void webprint(const char* input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: example.000webhostapp.com\n");                 
+     client.print("Host: espbots.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
@@ -390,7 +386,7 @@ void webprint(char input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: example.000webhostapp.com\n");                 
+     client.print("Host: espbots.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
@@ -428,7 +424,7 @@ void webprint(int input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: example.000webhostapp.com\n");                 
+     client.print("Host: espbots.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
@@ -466,7 +462,7 @@ void webprint(float input) {
      //change URL below to the Sub-Domain
      client.println("POST /Home/Code2.php HTTP/1.1"); 
      //change URL below ito match the Domain
-     client.print("Host: example.000webhostapp.com\n");                 
+     client.print("Host: espbots.000webhostapp.com\n");                 
      client.println("User-Agent: ESP8266/1.0");
      client.println("Connection: close"); 
      client.println("Content-Type: application/x-www-form-urlencoded");
@@ -521,4 +517,3 @@ void cleardoc (){
     } 
   
 }
-
