@@ -2,11 +2,11 @@
 #include "Wire.h"
 #include <ESP8266WiFi.h>
  
-const char* ssid = "ssid";//type your ssid
-const char* password = "12345";//type your password
+const char* ssid = "SLEEP DEPRIVED";//type your ssid
+const char* password = "Boulder01";//type your password
 
  //setup connection to webpage
-const char server[] = "https://example.000webhostapp.com"; 
+const char server[] = "https://espbots.000webhostapp.com"; 
 
 WiFiClient client;
 
@@ -80,22 +80,19 @@ void setup() {
   mpu6050Begin(MPU_addr);
    
   Wire.begin();
-   
 }
  
 void loop() {
-  
-  cleardoc();
-  //now read from the sensor and write to the webpage using these fuctions
-  rawdata next_sample;
-  setMPU6050scales(MPU_addr,0b00000000,0b00010000);
-  next_sample = mpu6050Read(MPU_addr, true);
-  convertRawToScaled(MPU_addr, next_sample,true);
- 
-  delay(1000); // Wait 1 second and scan again
-  
+    cleardoc();
+    //now read from the sensor and write to the webpage using these fuctions
+    rawdata next_sample;
+    setMPU6050scales(MPU_addr,0b00000000,0b00010000);
+    next_sample = mpu6050Read(MPU_addr, true);
+    convertRawToScaled(MPU_addr, next_sample,true);
+   
+    delay(1000); // Wait 1 second and scan again
+
 }
- 
   
  
 void mpu6050Begin(byte addr){
@@ -171,16 +168,16 @@ rawdata mpu6050Read(byte addr, bool Debug){
     webprint(" | GyZ = "); webprint(values.GyZ);
     
     Serial.print(" | Tmp = "); Serial.print(values.Tmp);
-    webprint(" | Tmp = "); webprint(values.Tmp);
+    //webprint(" | Tmp = "); webprint(values.Tmp);
     
     Serial.print(" | AcX = "); Serial.print(values.AcX);
-    webprint(" | AcX = "); webprint(values.AcX);
+    //webprint(" | AcX = "); webprint(values.AcX);
     
     Serial.print(" | AcY = "); Serial.print(values.AcY);
-    webprint(" | AcY = "); webprint(values.AcY);
+    //webprint(" | AcY = "); webprint(values.AcY);
     
     Serial.print(" | AcZ = "); Serial.println(values.AcZ);
-    webprint(" | AcZ = "); webprint(values.AcZ);
+    //webprint(" | AcZ = "); webprint(values.AcZ);
   }
  
   return values;
@@ -223,28 +220,28 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
     scale_value = MPU_GYRO_250_SCALE;
     if(Debug){
       Serial.println("±250 °/s");
-      webprint("±250 °/s");
+      //webprint("±250 °/s");
     }
     break;
     case 1:
     scale_value = MPU_GYRO_500_SCALE;
     if(Debug){
       Serial.println("±500 °/s");
-      webprint("±500 °/s");
+      //webprint("±500 °/s");
     }
     break;
     case 2:
     scale_value = MPU_GYRO_1000_SCALE;
     if(Debug){
       Serial.println("±1000 °/s");
-      webprint("±1000 °/s");
+      //webprint("±1000 °/s");
     }
     break;
     case 3:
     scale_value = MPU_GYRO_2000_SCALE;
     if(Debug){
       Serial.println("±2000 °/s");
-      webprint("±2000 °/s");
+      //webprint("±2000 °/s");
     }
     break;
     default:
@@ -258,35 +255,35 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
   scale_value = 0.0;
   if(Debug){
     Serial.print("Accl Full-Scale = ");
-    webprint("Accl Full-Scale = ");
+    //webprint("Accl Full-Scale = ");
   }
   switch (Accl){
     case 0:
     scale_value = MPU_ACCL_2_SCALE;
     if(Debug){
       Serial.println("±2 g");
-      webprint("±2 g");
+      //webprint("±2 g");
     }
     break;
     case 1:
     scale_value = MPU_ACCL_4_SCALE;
     if(Debug){
       Serial.println("±4 g");
-      webprint("±4 g");
+      //webprint("±4 g");
     }
     break;
     case 2:
     scale_value = MPU_ACCL_8_SCALE;
     if(Debug){
       Serial.println("±8 g");
-      webprint("±8 g");
+      //webprint("±8 g");
     }
     break;
     case 3:
     scale_value = MPU_ACCL_16_SCALE;
     if(Debug){
       Serial.println("±16 g");
-      webprint("±16 g");
+      //webprint("±16 g");
     }
     break;
     default:
@@ -315,16 +312,16 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
   webprint(" °/s| GyZ = "); webprint(values.GyZ);
    
   Serial.print(" °/s| Tmp = "); Serial.print(values.Tmp);
-  webprint(" °/s| Tmp = "); webprint(values.Tmp);
+  //webprint(" °/s| Tmp = "); webprint(values.Tmp);
   
   Serial.print(" °C| AcX = "); Serial.print(values.AcX);
-  webprint(" °C| AcX = "); webprint(values.AcX);
+  //webprint(" °C| AcX = "); webprint(values.AcX);
   
   Serial.print(" g| AcY = "); Serial.print(values.AcY);
-  webprint(" g| AcY = "); webprint(values.AcY);
+  //webprint(" g| AcY = "); webprint(values.AcY);
   
   Serial.print(" g| AcZ = "); Serial.print(values.AcZ);Serial.println(" g");
-  webprint(" g| AcZ = "); webprint(values.AcZ);webprint(" g");
+  //webprint(" g| AcZ = "); webprint(values.AcZ);webprint(" g");
   }
    
   return values;
@@ -517,3 +514,4 @@ void cleardoc (){
     } 
   
 }
+
