@@ -159,13 +159,13 @@ rawdata mpu6050Read(byte addr, bool Debug){
   if(Debug){
     
     Serial.print(" GyX = "); Serial.print(values.GyX);
-    webprint(" GyX = "); webprint(values.GyX);
+    //webprint(" GyX = "); webprint(values.GyX);
     
     Serial.print(" | GyY = "); Serial.print(values.GyY);
-    webprint(" | GyY = "); webprint(values.GyY);
+    //webprint(" | GyY = "); webprint(values.GyY);
     
     Serial.print(" | GyZ = "); Serial.print(values.GyZ);
-    webprint(" | GyZ = "); webprint(values.GyZ);
+    //webprint(" | GyZ = "); webprint(values.GyZ);
     
     Serial.print(" | Tmp = "); Serial.print(values.Tmp);
     //webprint(" | Tmp = "); webprint(values.Tmp);
