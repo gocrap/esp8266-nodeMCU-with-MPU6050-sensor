@@ -2,8 +2,8 @@
 #include "Wire.h"
 #include <ESP8266WiFi.h>
  
-const char* ssid = "SLEEP DEPRIVED";//type your ssid
-const char* password = "Boulder01";//type your password
+const char* ssid = "SSID";//type your ssid
+const char* password = "PASSWORD";//type your password
 
  //setup connection to webpage
 const char server[] = "https://espbots.000webhostapp.com"; 
@@ -212,7 +212,7 @@ scaleddata convertRawToScaled(byte addr, rawdata data_in, bool Debug){
    
   if(Debug){
     Serial.print("Gyro Full-Scale = ");
-    webprint("Gyro Full-Scale = ");
+    //webprint("Gyro Full-Scale = ");
   }
  
   switch (Gyro){
